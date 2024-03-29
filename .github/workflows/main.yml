@@ -11,17 +11,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      DEBUG: ${{ secrets.DEBUG }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
-      DB_ENGINE: ${{ secrets.DB_ENGINE }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: ${{ secrets.DB_PORT }}
-
     steps:
     - uses: actions/checkout@v2
 
@@ -45,4 +34,5 @@ jobs:
 
     - name: Test with Django's test runner
       run: |
+        source .env.ci
         python manage.py test
