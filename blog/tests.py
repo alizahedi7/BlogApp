@@ -103,6 +103,26 @@ class CommentViewTestCase(TestCase):
         self.assertEqual(response.data['text'], self.comment_data['text'])
         self.assertEqual(response.data['email'], self.comment_data['email']) 
 
+    def test_comments_on_post(self):
+        response = self.client.get(f'/api/posts/{self.post.id}/comments/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['text'], self.comment_data['text'])
+        self.assertEqual(response.data[0]['email'], self.comment_data['email'])
+
+    def test_comment_on_comment_create(self):
+        parent_comment = Comment.objects.create(post=self.post, text='Parent comment', email='parent@example.com')
+        comment_on_comment_data = {
+            "parent_comment": parent_comment.id,
+            "text": "Reply to parent comment",
+            "email": "reply@example.com"
+        }
+        response = self.client.post(f'/api/posts/{self.post.id}/comments/create/', data=comment_on_comment_data)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['parent_comment'], parent_comment.id)
+        self.assertEqual(response.data['text'], comment_on_comment_data['text'])
+        self.assertEqual(response.data['email'], comment_on_comment_data['email'])
+
 class PostViewSetTestCase(TestCase):
     def setUp(self):
         self.post_data = {"title": "Test Post", "content": "This is a test post."}
@@ -137,9 +157,3 @@ class PostViewSetTestCase(TestCase):
         self.assertTrue(serializer.is_valid())
         response = self.client.put(f'/api/articles/{self.post.id}/', data=self.post_data)
         self.assertEqual(response.status_code, 200)
-
-
-
-        
-        
-    
