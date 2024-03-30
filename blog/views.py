@@ -7,8 +7,8 @@ from rest_framework import generics, permissions, viewsets
 
 from .models import Comment, Post
 from .serializers import (CommentSerializer, PostSerializer,
-                          PostUpdateSerializer)
-
+                          PostUpdateSerializer, CommentOnCommentSerializer)
+from django.core.exceptions import ValidationError
 
 # APIs Developed with Django Rest Framework
 class PostListAPIView(generics.ListAPIView):
@@ -36,6 +36,23 @@ class CommentCreateAPIView(generics.CreateAPIView):
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+class CommentsOnPostAPIView(generics.ListAPIView):
+    serializer_class = CommentOnCommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        post_id = self.kwargs['pk']
+        return Comment.objects.filter(post_id=post_id)
+    
+class CommentOnCommentCreateAPIView(generics.CreateAPIView):
+    serializer_class = CommentOnCommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        post_id = self.kwargs.get('pk')
+        serializer.save(post_id=post_id)
+    
+
 class PostUpdateAPIView(generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostUpdateSerializer
@@ -61,6 +78,11 @@ class PostInSchema(Schema):
 
 class CommentSchema(Schema):
     post_id: int
+    text: str
+    email: str
+
+class CommentOnCommentSchema(Schema):
+    parent_comment_id: int
     text: str
     email: str
 
@@ -127,3 +149,21 @@ def delete_post(request, post_id: int):
     post = get_object_or_404(Post, id=post_id)
     post.delete()
     return {"success": True}
+
+@api.get("/posts/{int:post_id}/comments", response=List[CommentSchema] ,tags=['comments'], description="Get all comments on a post")
+@login_required
+def comments_on_post(request, post_id: int):
+    comments = Comment.objects.filter(post_id=post_id)
+    return comments
+
+@api.post("/posts/{int:post_id}/comments/create", tags=['comments'])
+@login_required
+def create_comment_on_comment(request, post_id: int, payload: CommentOnCommentSchema):
+    """
+    To create a comment on comment please provide:
+    - **parent_comment_id**
+    - **text**
+    - **email**
+    """
+    comment = Comment.objects.create(post_id=post_id, **payload.dict())
+    return {"id": comment.id}
