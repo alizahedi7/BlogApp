@@ -5,7 +5,7 @@ from .serializers import CommentSerializer, PostSerializer, PostUpdateSerializer
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
-
+from django.test import override_settings
 
 class PostModelTestCase(TestCase):
     def test_post_creation(self):
@@ -52,6 +52,7 @@ class PostViewTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
     
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}})
     def test_post_list(self):
         response = self.client.get('/api/posts/')
         self.assertEqual(response.status_code, 200)
@@ -59,6 +60,7 @@ class PostViewTestCase(TestCase):
         self.assertEqual(response.data[0]['title'], self.post_data['title'])
         self.assertEqual(response.data[0]['content'], self.post_data['content'])
     
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}})
     def test_post_detail(self):
         response = self.client.get(f'/api/posts/{self.post.id}/')
         self.assertEqual(response.status_code, 200)
@@ -88,6 +90,7 @@ class CommentViewTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
     
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}})
     def test_comment_list(self):
         response = self.client.get('/api/comments/')
         self.assertEqual(response.status_code, 200)
@@ -103,6 +106,7 @@ class CommentViewTestCase(TestCase):
         self.assertEqual(response.data['text'], self.comment_data['text'])
         self.assertEqual(response.data['email'], self.comment_data['email']) 
 
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}})
     def test_comments_on_post(self):
         response = self.client.get(f'/api/posts/{self.post.id}/comments/')
         self.assertEqual(response.status_code, 200)
@@ -132,7 +136,7 @@ class PostViewSetTestCase(TestCase):
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
-    
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}})
     def test_post_list(self):
         response = self.client.get('/api/articles/')
         self.assertEqual(response.status_code, 200)
@@ -140,6 +144,7 @@ class PostViewSetTestCase(TestCase):
         self.assertEqual(response.data[0]['title'], self.post_data['title'])
         self.assertEqual(response.data[0]['content'], self.post_data['content'])
 
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}})    
     def test_post_detail(self):
         response = self.client.get(f'/api/articles/{self.post.id}/')
         self.assertEqual(response.status_code, 200)
