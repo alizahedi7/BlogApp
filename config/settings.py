@@ -67,8 +67,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+# Check if the environment variable DEBUG_TOOLBAR_ENABLED is set to "True"
+if env.bool("DEBUG_TOOLBAR_ENABLED", default=False):
+    # Import DebugToolbarMiddleware only if DEBUG_TOOLBAR_ENABLED is True
+    from debug_toolbar.middleware import DebugToolbarMiddleware
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 ROOT_URLCONF = 'config.urls'
 
