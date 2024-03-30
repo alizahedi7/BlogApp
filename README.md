@@ -1,14 +1,13 @@
 # BlogApp
 
-Welcome to BlogApp, a Django-based application for managing blog posts and comments.
-
+Welcome to the Django BlogApp! This is a simple Django application that allows users to create, read, update, and delete blog posts.
 
 ## Prerequisites
 
 Before you begin, make sure you have Docker and Docker Compose installed on your system.
 
-- Docker: https://docs.docker.com/get-docker/
-- Docker Compose: https://docs.docker.com/compose/install/
+- Docker: [Install Docker](https://docs.docker.com/get-docker/)
+- Docker Compose: [Install Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Setup Instructions
 
@@ -25,18 +24,20 @@ Before you begin, make sure you have Docker and Docker Compose installed on your
     ```
 
 3. Configure Environment Variables
-Create a .env file in the root directory of the project and specify the required environment variables. For example:
-   ```env
+
+    Create a `.env` file in the root directory of the project and specify the required environment variables. For example:
+
+    ```plaintext
     DEBUG=True
     SECRET_KEY=your_secret_key
-    ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+    ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
     DB_ENGINE=django.db.backends.postgresql
     DB_NAME=blog_db
     DB_USER=blog_user
     DB_PASSWORD=blog_password
     DB_HOST=db
     DB_PORT=5432
-   ```
+    ```
 
 4. Build the Docker images:
 
@@ -50,7 +51,7 @@ Create a .env file in the root directory of the project and specify the required
     docker-compose up -d
     ```
 
-The application should now be running. You can access it at http://localhost:8000/.
+The application should now be running. You can access it at [http://localhost:8000/](http://localhost:8000/).
 
 ## Generating Fake Data
 
@@ -70,6 +71,17 @@ You can generate fake data for testing purposes using the provided management co
 
 This command will generate 10 instances of posts and 10 comments for each post in the database.
 
+## Accessing API Documentation
+
+You can explore the API documentation to understand the endpoints and their functionalities. Follow these steps to access the API documentation:
+
+1. Ensure that the Docker containers are running.
+2. Open your web browser and navigate to the following URL:
+
+    [http://0.0.0.0:8000/api/ninja/docs#/](http://0.0.0.0:8000/api/ninja/docs#/)
+
+This URL will take you to the Swagger UI interface, where you can interactively explore and test the available API endpoints.
+
 ## Additional Notes
 
 - If you make any changes to the Docker configuration or environment variables, you may need to rebuild the Docker images using `docker-compose build`.
@@ -79,4 +91,3 @@ This command will generate 10 instances of posts and 10 comments for each post i
 - For more detailed logs, you can check the logs of individual containers using `docker-compose logs [container_name]`.
 
 - Integration with GitHub Actions is included in the repository for automated testing and deployment. Make sure to configure your GitHub repository accordingly.
-
