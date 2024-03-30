@@ -57,19 +57,32 @@ The application should now be running. You can access it at [http://localhost:80
 
 You can generate fake data for testing purposes using the provided management command. Follow these steps:
 
-1. Access the Docker container running the Django application using the following command:
+1. Make migrations for the Django application:
+
+    ```bash
+    docker-compose exec web python manage.py makemigrations
+    ```
+
+2. Apply migrations to create database tables:
+
+    ```bash
+    docker-compose exec web python manage.py migrate
+    ```
+
+3. Access the Docker container running the Django application using the following command:
 
     ```bash
     docker-compose exec web bash
     ```
 
-2. Once inside the container, run the management command to seed the database with fake data:
+4. Once inside the container, run the management command to seed the database with fake data:
 
     ```bash
     python manage.py seed_db
     ```
 
 This command will generate 10 instances of posts and 10 comments for each post in the database.
+
 
 ## Accessing API Documentation
 
@@ -81,6 +94,11 @@ You can explore the API documentation to understand the endpoints and their func
     [http://0.0.0.0:8000/api/ninja/docs#/](http://0.0.0.0:8000/api/ninja/docs#/)
 
 This URL will take you to the Swagger UI interface, where you can interactively explore and test the available API endpoints.
+
+## Caching and Monitoring
+
+- Redis caching has been implemented to improve API performance.
+- Django Debug Toolbar has been integrated to monitor API queries and performance. Make sure `DEBUG` is set to `True` in your environment variables to enable the debug toolbar.
 
 ## Additional Notes
 
