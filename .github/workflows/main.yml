@@ -21,6 +21,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_PORT: ${{ secrets.DB_PORT }}
+      DEBUG_TOOLBAR_ENABLED: ${{ secrets.DEBUG_TOOLBAR_ENABLED }}
 
     steps:
     - uses: actions/checkout@v2
