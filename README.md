@@ -27,10 +27,10 @@ Before you begin, make sure you have Docker and Docker Compose installed on your
 
     Create a `.env` file in the root directory of the project and specify the required environment variables. For example:
 
-    ```plaintext
+    ```env
     DEBUG=True
     SECRET_KEY=your_secret_key
-    ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
     DB_ENGINE=django.db.backends.postgresql
     DB_NAME=blog_db
     DB_USER=blog_user
