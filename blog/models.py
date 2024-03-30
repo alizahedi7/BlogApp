@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 class Post(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
@@ -13,6 +11,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     text = models.TextField()
     email = models.EmailField()
 
