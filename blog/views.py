@@ -2,13 +2,15 @@ from typing import List
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from ninja import NinjaAPI, Schema
 from rest_framework import generics, permissions, viewsets
 
 from .models import Comment, Post
-from .serializers import (CommentSerializer, PostSerializer,
-                          PostUpdateSerializer, CommentOnCommentSerializer)
-from django.core.exceptions import ValidationError
+from .serializers import (CommentOnCommentSerializer, CommentSerializer,
+                          PostSerializer, PostUpdateSerializer)
+
 
 # APIs Developed with Django Rest Framework
 class PostListAPIView(generics.ListAPIView):
@@ -16,15 +18,30 @@ class PostListAPIView(generics.ListAPIView):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # Cache the response of this API view for 60 seconds using Redis cache
+    @method_decorator(cache_page(60, cache='default'))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
 class CommentListAPIView(generics.ListAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # Cache the response of this API view for 60 seconds using Redis cache
+    @method_decorator(cache_page(60, cache='default'))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
 class PostRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    # Cache the response of this API view for 60 seconds using Redis cache
+    @method_decorator(cache_page(60, cache='default'))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 class PostCreateAPIView(generics.CreateAPIView):
     queryset = Post.objects.all()
@@ -40,6 +57,11 @@ class CommentsOnPostAPIView(generics.ListAPIView):
     serializer_class = CommentOnCommentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # Cache the response of this API view for 60 seconds using Redis cache
+    @method_decorator(cache_page(60, cache='default'))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
     def get_queryset(self):
         post_id = self.kwargs['pk']
         return Comment.objects.filter(post_id=post_id)
@@ -62,6 +84,15 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    # Cache the list and detail views of the PostViewSet for 60 seconds using Redis cache
+    @method_decorator(cache_page(60))
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @method_decorator(cache_page(60))
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
 
 
 # APIs Developed with Django Ninja
