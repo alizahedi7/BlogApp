@@ -81,7 +81,7 @@ You can generate fake data for testing purposes using the provided management co
     python manage.py seed_db
     ```
 
-This command will generate 10 instances of posts and 10 comments for each post in the database.
+This command will generate 10 instances of posts and 5 comments for each post in the database.
 
 
 ## Accessing API Documentation
